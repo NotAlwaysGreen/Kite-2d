@@ -1,7 +1,9 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public Image staminaBar; // UI element to display stamina
     [Header("Movement")]
     public float moveSpeed = 5f;
     public float jumpForce = 5f;
@@ -28,12 +30,14 @@ public class PlayerMovement : MonoBehaviour
         currentStamina = maxStamina;
     }
 
-    void Update()
-    {
-        float moveInput = Input.GetAxis("Horizontal");
+    void Update() { 
+
+        staminaBar.fillAmount = GetStaminaPercentage(); // Update stamina bar UI
+
+    float moveInput = Input.GetAxis("Horizontal");
 
         // Check if sprint is requested and allowed
-        isSprinting = Input.GetKey(KeyCode.LeftShift) && currentStamina > 0f && isGrounded;
+        isSprinting = Input.GetKey(KeyCode.LeftShift) && currentStamina > 0.5f && isGrounded;
 
         float actualSpeed = moveSpeed * (isSprinting ? sprintMultiplier : 1f);
 
