@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour
 {
     public Image staminaBar;
+    public int coin = 0;
 
     [Header("Movement")]
     public float moveSpeed = 5f;
