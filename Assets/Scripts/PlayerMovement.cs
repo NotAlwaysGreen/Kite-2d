@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Rope Physics")]
     public float ropeStiffness = 10f;
+    public float maxPullSpeed = 10f; // ✅ NEW: velocity cap
 
     private float currentRopeLength;
     private bool isPulling;
@@ -52,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // 🔋 Update UI
+        // 🔋 UI
         staminaBar.fillAmount = GetStaminaPercentage();
 
         // 🎮 Input
@@ -75,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
         if (isPulling && kite != null)
         {
             HandleRopePhysics();
+            ClampPullVelocity(); // ✅ NEW
         }
     }
 
@@ -98,18 +100,27 @@ public class PlayerMovement : MonoBehaviour
         float distance = toKite.magnitude;
         Vector2 direction = toKite.normalized;
 
-        // 🎯 Gradual rope shortening (climbing)
+        // 🎯 Rope shortening
         currentRopeLength -= ropeShortenSpeed * Time.fixedDeltaTime;
         currentRopeLength = Mathf.Max(currentRopeLength, minRopeLength);
 
-        // 🪢 Apply force ONLY if rope is stretched
+        // 🪢 Apply force if stretched
         if (distance > currentRopeLength)
         {
             float stretchAmount = distance - currentRopeLength;
-
             Vector2 force = direction * stretchAmount * ropeStiffness;
 
             rb.AddForce(force, ForceMode2D.Force);
+        }
+    }
+
+    void ClampPullVelocity()
+    {
+        float speed = rb.linearVelocity.magnitude;
+
+        if (speed > maxPullSpeed)
+        {
+            rb.linearVelocity = rb.linearVelocity.normalized * maxPullSpeed;
         }
     }
 
@@ -117,17 +128,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isPulling)
         {
-            // 🔴 Drain stamina while pulling
             currentStamina -= pullStaminaConsumptionRate * Time.deltaTime;
         }
         else if (isSprinting)
         {
-            // 🔴 Drain stamina while sprinting
             currentStamina -= staminaConsumptionRate * Time.deltaTime;
         }
         else
         {
-            // 🟢 Recover stamina
             currentStamina += staminaRecoveryRate * Time.deltaTime;
         }
 
@@ -139,7 +147,6 @@ public class PlayerMovement : MonoBehaviour
         return currentStamina / maxStamina;
     }
 
-    // 🔴 For kite script later
     public bool IsPulling()
     {
         return isPulling;
