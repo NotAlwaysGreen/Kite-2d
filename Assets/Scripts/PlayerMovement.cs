@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Rope Physics")]
     public float ropeStiffness = 10f;
-    public float maxPullSpeed = 10f; // ✅ NEW: velocity cap
+    public float maxPullSpeed = 10f;
 
     private float currentRopeLength;
     private bool isPulling;
@@ -53,10 +53,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // 🔋 UI
         staminaBar.fillAmount = GetStaminaPercentage();
 
-        // 🎮 Input
         isPulling = Input.GetKey(KeyCode.Space) && currentStamina > 0f;
 
         if (!isPulling)
@@ -66,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
 
         HandleStamina();
 
-        if (transform.position.y < -30f) // 🕳️ Fall death
+        if (transform.position.y < -30f)
         {
             Die();
         }
@@ -74,14 +72,12 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // 🌍 Ground check
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        // 🪁 Rope physics
         if (isPulling && kite != null)
         {
             HandleRopePhysics();
-            ClampPullVelocity(); // ✅ NEW
+            ClampPullVelocity();
         }
     }
 
@@ -105,11 +101,9 @@ public class PlayerMovement : MonoBehaviour
         float distance = toKite.magnitude;
         Vector2 direction = toKite.normalized;
 
-        // 🎯 Rope shortening
         currentRopeLength -= ropeShortenSpeed * Time.fixedDeltaTime;
         currentRopeLength = Mathf.Max(currentRopeLength, minRopeLength);
 
-        // 🪢 Apply force if stretched
         if (distance > currentRopeLength)
         {
             float stretchAmount = distance - currentRopeLength;
@@ -152,15 +146,11 @@ public class PlayerMovement : MonoBehaviour
         return currentStamina / maxStamina;
     }
 
-    public bool IsPulling()
-    {
-        return isPulling;
-    }
-
     private void Die()
     {
-        // 🔄 Reset level on death
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+        );
         Time.timeScale = 1f;
     }
 }

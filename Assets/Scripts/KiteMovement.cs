@@ -8,16 +8,19 @@ public class KiteController : MonoBehaviour
 
     [Header("String")]
     public float maxDistance = 5f;
-    public float stringElastic = 5f;     // how strongly kite snaps back when overstretched
-    public float maxElasticStretch = 1.5f; // allow some extra stretch beyond maxDistance
+    public float stringElastic = 5f;
+    public float maxElasticStretch = 1.5f;
 
     [Header("Lift")]
-    public float liftFactor = 3f;        // how much upward lift from pulling
-    public float maxLift = 10f;          // cap vertical speed
+    public float liftFactor = 3f;
+    public float maxLift = 10f;
 
     [Header("Air")]
     public float drag = 1f;
     public float gravityScale = 1f;
+
+    [HideInInspector]
+    public bool isAttached = false;
 
     private Rigidbody2D rb;
 
@@ -30,6 +33,8 @@ public class KiteController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isAttached) return;
+
         ApplyStringElasticity();
         ApplyLiftFromPull();
         ClampVelocity();
@@ -40,7 +45,6 @@ public class KiteController : MonoBehaviour
         Vector2 toKite = rb.position - (Vector2)player.position;
         float distance = toKite.magnitude;
 
-        // Calculate allowed stretch
         float allowedDistance = maxDistance * maxElasticStretch;
 
         if (distance > allowedDistance)
@@ -58,11 +62,6 @@ public class KiteController : MonoBehaviour
 
         if (distance > maxDistance)
         {
-            // Kite is being pulled � generate upward lift
-            Vector2 dir = toKite.normalized;
-            Vector2 pullDirection = -dir; // towards player
-
-            // Lift proportional to the pull and current horizontal motion
             Vector2 lift = Vector2.up * rb.linearVelocity.magnitude * liftFactor;
             rb.AddForce(lift);
         }
