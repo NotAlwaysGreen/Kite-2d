@@ -65,6 +65,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         HandleStamina();
+
+        if (transform.position.y < -30f) // 🕳️ Fall death
+        {
+            Die();
+        }
     }
 
     void FixedUpdate()
@@ -150,5 +155,12 @@ public class PlayerMovement : MonoBehaviour
     public bool IsPulling()
     {
         return isPulling;
+    }
+
+    private void Die()
+    {
+        // 🔄 Reset level on death
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        Time.timeScale = 1f;
     }
 }
