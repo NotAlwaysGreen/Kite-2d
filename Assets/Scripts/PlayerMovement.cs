@@ -36,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
     public float pullStaminaConsumptionRate = 1.2f;
 
     private Rigidbody2D rb;
-    private bool isGrounded;
+    public bool isGrounded;
     private float currentStamina;
     private bool isSprinting;
 
