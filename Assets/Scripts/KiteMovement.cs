@@ -38,6 +38,7 @@ public class KiteController : MonoBehaviour
         ApplyStringElasticity();
         ApplyLiftFromPull();
         ClampVelocity();
+        ApplyHeightCorrection();
     }
 
     void ApplyStringElasticity()
@@ -72,5 +73,23 @@ public class KiteController : MonoBehaviour
         Vector2 vel = rb.linearVelocity;
         vel.y = Mathf.Clamp(vel.y, -Mathf.Infinity, maxLift);
         rb.linearVelocity = vel;
+    }
+    void ApplyHeightCorrection()
+    {
+        float playerY = player.position.y;
+        float kiteY = rb.position.y;
+
+        if (kiteY < playerY)
+        {
+            float heightDifference = playerY - kiteY;
+
+            // Smooth, controlled lift
+            float force = heightDifference * 3f;
+
+            // Prevent extreme boosts
+            force = Mathf.Clamp(force, 0f, 10f);
+            if (force < 1f) force = 1f; // Ensure there's always some lift
+            rb.AddForce(Vector2.up * force);
+        }
     }
 }
