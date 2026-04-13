@@ -39,24 +39,13 @@ public class KiteController : MonoBehaviour
         rb.linearDamping = drag;
     }
 
-    void Update()
-    {
-        //  Press Q to retract (only when not attached and not already retracting)
-        if (Input.GetKeyDown(KeyCode.Q) && !isAttached && !isRetracting)
-        {
-            StartRetract();
-        }
-    }
+    
 
     void FixedUpdate()
     {
         if (isAttached) return;
 
-        if (isRetracting)
-        {
-            RetractToPlayer();
-            return;
-        }
+       
 
         ApplyStringElasticity();
         ApplyLiftFromPull();
@@ -64,38 +53,6 @@ public class KiteController : MonoBehaviour
         ApplyHeightCorrection();
     }
 
-    void StartRetract()
-    {
-        isRetracting = true;
-
-        rb.linearVelocity = Vector2.zero;
-        rb.angularVelocity = 0f;
-
-        col.enabled = false; //  ignore collisions while retracting
-    }
-
-    void RetractToPlayer()
-    {
-        Vector2 target = player.position;
-        Vector2 current = rb.position;
-
-        float distance = Vector2.Distance(current, target);
-
-        // Smooth ease-in (slows down near player)
-        float speedMultiplier = Mathf.Clamp01(distance);
-        float speed = retractSpeed * speedMultiplier;
-
-        Vector2 newPos = Vector2.MoveTowards(current, target, speed * Time.fixedDeltaTime);
-        rb.MovePosition(newPos);
-
-        if (distance < attachDistance)
-        {
-            isRetracting = false;
-            isAttached = true;
-
-            col.enabled = true; //  turn collider back on
-        }
-    }
 
     void ApplyStringElasticity()
     {
