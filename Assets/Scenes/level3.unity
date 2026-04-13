@@ -898,9 +898,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 548438944}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7388fccc77332d4da0508f54ab52f12, type: 3}
+  m_Script: {fileID: 11500000, guid: 29de65927430c244fa07a153a6822184, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RestartGame
+  nextLevelName: MainMenu
 --- !u!1 &580459343
 GameObject:
   m_ObjectHideFlags: 0
@@ -2962,7 +2963,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Next Level
+  m_text: Main Menu
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3652,6 +3653,8 @@ MonoBehaviour:
   maxLift: 3
   drag: 1
   gravityScale: 0.4
+  retractSpeed: 12
+  attachDistance: 0.5
   isAttached: 0
 --- !u!60 &1996270807
 PolygonCollider2D:
