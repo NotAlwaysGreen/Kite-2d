@@ -7,7 +7,7 @@ public class Coin : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             PlayerMovement player = collision.gameObject.GetComponent<PlayerMovement>();
-            player.coin += 1;
+            player.currentStamina += 2;
             Destroy(gameObject);
         }
     }

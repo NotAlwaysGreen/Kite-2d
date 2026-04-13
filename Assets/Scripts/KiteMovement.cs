@@ -25,8 +25,6 @@ public class KiteController : MonoBehaviour
 
     [HideInInspector] public bool isAttached = false;
 
-    private bool isRetracting = false;
-
     private Rigidbody2D rb;
     private Collider2D col;
 
@@ -50,7 +48,8 @@ public class KiteController : MonoBehaviour
         ApplyStringElasticity();
         ApplyLiftFromPull();
         ClampVelocity();
-        ApplyHeightCorrection();
+        //ApplyHeightCorrection();
+        ApplyTensionLiftWhenBelowPlayer();
     }
 
 
@@ -103,6 +102,33 @@ public class KiteController : MonoBehaviour
             force = Mathf.Clamp(force, 0.5f, 10f);
 
             rb.AddForce(Vector2.up * force);
+        }
+    }
+
+    void ApplyTensionLiftWhenBelowPlayer()
+    {
+        Vector2 toKite = rb.position - (Vector2)player.position;
+        float distance = toKite.magnitude;
+
+        float playerY = player.position.y;
+        float kiteY = rb.position.y;
+
+        // Only apply when stretched AND below player
+        if (distance > maxDistance && kiteY < playerY-1f)
+        {
+            float stretchAmount = distance - maxDistance;
+            float maxStretch = maxDistance * (maxElasticStretch - 1f);
+
+            float stretchPercent = stretchAmount / maxStretch;
+            stretchPercent = Mathf.Clamp01(stretchPercent);
+
+            // Additional lift based on tension
+            float liftStrength = stretchPercent * liftFactor * 10f;
+
+            // Small minimum to avoid dead zones
+            liftStrength = Mathf.Max(liftStrength, 0.1f);
+
+            rb.AddForce(Vector2.up * liftStrength);
         }
     }
 }
