@@ -32,9 +32,9 @@ public class PlayerMovement : MonoBehaviour
     public float pullStaminaConsumptionRate = 1.2f;
 
     [Header("Glide")]
-    public float glideGravityScale = 0.3f;
+    public float glideGravityScale = 0.5f;
     public float glideDrag = 2f;
-    public float glideStaminaConsumptionRate = 0.6f;
+    public float glideStaminaConsumptionRate = 1f;
 
     private float currentRopeLength;
     public float currentStamina;
@@ -71,8 +71,8 @@ public class PlayerMovement : MonoBehaviour
         //  CORE LOGIC
         bool kiteAttached = holdPoint != null && holdPointHasKite();
 
-        isPulling = spaceHeld && !kiteAttached && currentStamina > 0.5f;
-        isGliding = spaceHeld && kiteAttached && currentStamina > 0.1f;
+        isPulling = spaceHeld && !kiteAttached && currentStamina > 0f;
+        isGliding = spaceHeld && kiteAttached && currentStamina > 0f;
 
         if (!isPulling)
         {
@@ -103,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // 🔹 CHECK FROM HOLD POINT
+    //  CHECK FROM HOLD POINT
     bool holdPointHasKite()
     {
         return holdPoint != null && holdPoint.GetAttachedKite() != null;
@@ -114,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
         float moveInput = Input.GetAxis("Horizontal");
 
         isSprinting = Input.GetKey(KeyCode.LeftShift)
-                      && currentStamina > 0.5f
+                      && currentStamina > 0f
                       && isGrounded;
 
         float actualSpeed = moveSpeed * (isSprinting ? sprintMultiplier : 1f);
@@ -190,7 +190,7 @@ public class PlayerMovement : MonoBehaviour
         {
             currentStamina -= staminaConsumptionRate * Time.deltaTime;
         }
-        else
+        else if (isGrounded)
         {
             currentStamina += staminaRecoveryRate * Time.deltaTime;
         }
