@@ -898,7 +898,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.17, y: 6.17, z: -10}
+  m_LocalPosition: {x: 2.87, y: 3.79, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1025,7 +1025,7 @@ Transform:
   m_GameObject: {fileID: 544429648}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.17, y: 6.17, z: -10}
+  m_LocalPosition: {x: 2.87, y: 3.79, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7719,7 +7719,7 @@ Transform:
   m_GameObject: {fileID: 1874003452}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.17, y: 3.17, z: 0}
+  m_LocalPosition: {x: 2.87, y: 0.79, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7740,13 +7740,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   staminaBar: {fileID: 166612409}
-  coin: 0
-  moveSpeed: 5
+  holdPoint: {fileID: 0}
   kite: {fileID: 1996270810}
-  ropeShortenSpeed: 3
-  minRopeLength: 1.5
-  ropeStiffness: 10
-  maxPullSpeed: 15
+  moveSpeed: 5
   groundCheck: {fileID: 421582303}
   groundCheckRadius: 0.2
   groundLayer:
@@ -7756,8 +7752,14 @@ MonoBehaviour:
   maxStamina: 5
   staminaConsumptionRate: 2
   staminaRecoveryRate: 0.5
+  ropeShortenSpeed: 3
+  minRopeLength: 1.5
+  ropeStiffness: 10
+  maxPullSpeed: 15
   pullStaminaConsumptionRate: 1.2
-  isGrounded: 0
+  glideGravityScale: 0.3
+  glideDrag: 2
+  glideStaminaConsumptionRate: 0.6
   currentStamina: 0
 --- !u!70 &1874003458
 CapsuleCollider2D:
@@ -8112,7 +8114,7 @@ Transform:
   m_GameObject: {fileID: 1996270805}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.57, y: 3.07, z: 0}
+  m_LocalPosition: {x: 1.4700012, y: 0.6899998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

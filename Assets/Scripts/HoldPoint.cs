@@ -6,6 +6,11 @@ public class KiteInteraction : MonoBehaviour
     private KiteController attachedKite;
     private Rigidbody2D playerRb;
 
+    public KiteController GetAttachedKite()
+    {
+        return attachedKite;
+    }
+
     void Awake()
     {
         playerRb = GetComponentInParent<Rigidbody2D>();

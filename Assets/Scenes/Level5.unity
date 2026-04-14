@@ -328,7 +328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29de65927430c244fa07a153a6822184, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NextLevel
-  nextLevelName: Level5
+  nextLevelName: MainMenu
 --- !u!114 &299107587
 MonoBehaviour:
   m_ObjectHideFlags: 0

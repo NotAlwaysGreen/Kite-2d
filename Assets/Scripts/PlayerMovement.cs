@@ -3,23 +3,15 @@ using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("References")]
     public Image staminaBar;
-    public int coin = 0;
+    public KiteInteraction holdPoint; // reference to your script
+    public Transform kite;
+
+    private Rigidbody2D rb;
 
     [Header("Movement")]
     public float moveSpeed = 5f;
-
-    [Header("Kite Rope")]
-    public Transform kite;
-    public float ropeShortenSpeed = 0.001f;
-    public float minRopeLength = 1.5f;
-
-    [Header("Rope Physics")]
-    public float ropeStiffness = 10f;
-    public float maxPullSpeed = 10f;
-
-    private float currentRopeLength;
-    private bool isPulling;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -32,18 +24,37 @@ public class PlayerMovement : MonoBehaviour
     public float staminaConsumptionRate = 1f;
     public float staminaRecoveryRate = 0.5f;
 
-    [Header("Pull Stamina")]
+    [Header("Pull")]
+    public float ropeShortenSpeed = 0.001f;
+    public float minRopeLength = 1.5f;
+    public float ropeStiffness = 10f;
+    public float maxPullSpeed = 10f;
     public float pullStaminaConsumptionRate = 1.2f;
 
-    private Rigidbody2D rb;
-    public bool isGrounded;
+    [Header("Glide")]
+    public float glideGravityScale = 0.3f;
+    public float glideDrag = 2f;
+    public float glideStaminaConsumptionRate = 0.6f;
+
+    private float currentRopeLength;
     public float currentStamina;
+
+    private float defaultGravityScale;
+    private float defaultDrag;
+
+    private bool isGrounded;
     private bool isSprinting;
+    private bool isPulling;
+    private bool isGliding;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
         currentStamina = maxStamina;
+
+        defaultGravityScale = rb.gravityScale;
+        defaultDrag = rb.linearDamping;
 
         if (kite != null)
         {
@@ -55,13 +66,20 @@ public class PlayerMovement : MonoBehaviour
     {
         staminaBar.fillAmount = GetStaminaPercentage();
 
-        isPulling = Input.GetKey(KeyCode.Space) && currentStamina > 0.5f;
+        bool spaceHeld = Input.GetKey(KeyCode.Space);
+
+        //  CORE LOGIC
+        bool kiteAttached = holdPoint != null && holdPointHasKite();
+
+        isPulling = spaceHeld && !kiteAttached && currentStamina > 0.5f;
+        isGliding = spaceHeld && kiteAttached && currentStamina > 0.1f;
 
         if (!isPulling)
         {
             HandleMovement();
         }
 
+        HandleGlide();
         HandleStamina();
 
         if (transform.position.y < -30f)
@@ -85,6 +103,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // 🔹 CHECK FROM HOLD POINT
+    bool holdPointHasKite()
+    {
+        return holdPoint != null && holdPoint.GetAttachedKite() != null;
+    }
+
     void HandleMovement()
     {
         float moveInput = Input.GetAxis("Horizontal");
@@ -99,6 +123,26 @@ public class PlayerMovement : MonoBehaviour
             moveInput * actualSpeed,
             rb.linearVelocity.y
         );
+    }
+
+    void HandleGlide()
+    {
+        if (isGliding)
+        {
+            rb.gravityScale = glideGravityScale;
+            rb.linearDamping = glideDrag;
+
+            // optional: cap fall speed
+            if (rb.linearVelocity.y < -2f)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, -2f);
+            }
+        }
+        else
+        {
+            rb.gravityScale = defaultGravityScale;
+            rb.linearDamping = defaultDrag;
+        }
     }
 
     void HandleRopePhysics()
@@ -138,6 +182,10 @@ public class PlayerMovement : MonoBehaviour
         {
             currentStamina -= pullStaminaConsumptionRate * Time.deltaTime;
         }
+        else if (isGliding)
+        {
+            currentStamina -= glideStaminaConsumptionRate * Time.deltaTime;
+        }
         else if (isSprinting)
         {
             currentStamina -= staminaConsumptionRate * Time.deltaTime;
@@ -150,12 +198,12 @@ public class PlayerMovement : MonoBehaviour
         currentStamina = Mathf.Clamp(currentStamina, 0f, maxStamina);
     }
 
-    public float GetStaminaPercentage()
+    float GetStaminaPercentage()
     {
         return currentStamina / maxStamina;
     }
 
-    private void Die()
+    void Die()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
